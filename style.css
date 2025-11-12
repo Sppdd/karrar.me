@@ -1,0 +1,50 @@
+/* Alkalami for HEADERS default font sizes */
+.alkalami-regular {
+    font-family: "Alkalami", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  /* Amiri for arabic default font sizes */
+  .amiri-regular {
+    font-family: "Amiri", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  /* Amiri for arabic bold sub-headers default font sizes */
+  .amiri-bold {
+    font-family: "Amiri", serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  /* Amiri for arabic italic sub-headers default font sizes */
+  .amiri-regular-italic {
+    font-family: "Amiri", serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  /* Amiri for arabic bold italic sub-headers default font sizes */
+  .amiri-bold-italic {
+    font-family: "Amiri", serif;
+    font-weight: 700;
+    font-style: italic;
+  }
+  /* Rakkas for latin default font sizes */
+  .rakkas-regular {
+    font-family: "Rakkas", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  /* Momo Trust Display for latin default font sizes */
+  .momo-trust-display-regular {
+    font-family: "Momo Trust Display", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  /* Slabo 27px for latin headers default font sizes */
+  .slabo-27px-regular {
+    font-family: "Slabo 27px", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  

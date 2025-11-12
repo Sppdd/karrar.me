@@ -1,0 +1,22 @@
+{
+  "name": "karrar.me",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "add:project": "node scripts/update.js project",
+    "add:reading": "node scripts/update.js reading",
+    "deploy": "node scripts/update.js deploy"
+  },
+  "dependencies": {
+    "astro": "^5.15.5",
+    "@astrojs/mdx": "^4.1.1",
+    "marked": "^14.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2"
+  }
+}
