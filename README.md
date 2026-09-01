@@ -1,43 +1,41 @@
-# Astro Starter Kit: Minimal
+# karrar.me
+
+Personal site, built with [Astro](https://astro.build).
+
+## Develop
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev      # http://localhost:4321/karrar.me/
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+| Command           | Action                                    |
+| :---------------- | :---------------------------------------- |
+| `npm install`     | Install dependencies                      |
+| `npm run dev`     | Dev server at `localhost:4321`            |
+| `npm run build`   | Production build to `./dist/`             |
+| `npm run preview` | Preview the build locally                 |
 
-## 🚀 Project Structure
+## Structure
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```
+src/
+├── layouts/Base.astro    shared <head>, fonts, favicon
+├── styles/global.css     type system + design tokens
+└── pages/index.astro     routes are files here
+public/                   copied verbatim to the build output
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Deploy
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Pushes to `main` build and publish to GitHub Pages via
+`.github/workflows/deploy.yml`. The site is a *project* site served from
+`https://sppdd.github.io/karrar.me/`, so `astro.config.mjs` sets `base:
+'/karrar.me/'`. Moving to the apex domain means dropping `base`, pointing
+`site` at `https://karrar.me`, and adding `public/CNAME`.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## docs/
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+`docs/` holds the architecture and phasing plan for a separate project — an AI
+video-generation platform. It is written here for reference; the implementation
+lives in its own repository. Start at [`docs/00-overview.md`](docs/00-overview.md).

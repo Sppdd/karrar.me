@@ -1,0 +1,117 @@
+/*
+ * Type system
+ * -----------
+ * Headers (latin/arabic display) .... Alkalami, Rakkas, Slabo 27px
+ * Body (arabic) ..................... Amiri
+ * Display (latin) ................... Momo Trust Display
+ *
+ * The font files themselves are loaded via <link> in src/layouts/Base.astro so
+ * the fetch starts in parallel with this stylesheet rather than behind it.
+ */
+
+:root {
+  --font-header: "Alkalami", serif;
+  --font-arabic: "Amiri", serif;
+  --font-display: "Momo Trust Display", sans-serif;
+  --font-latin-header: "Slabo 27px", serif;
+  --font-latin-display: "Rakkas", serif;
+
+  --bg: #fdfdfc;
+  --fg: #1a1a1a;
+  --fg-muted: #5c5c5c;
+  --rule: #e4e2dd;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131313;
+    --fg: #ededed;
+    --fg-muted: #a0a0a0;
+    --rule: #2e2e2e;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-latin-header);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-header);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* Arabic content sets its own direction and family. */
+[lang="ar"] {
+  direction: rtl;
+  font-family: var(--font-arabic);
+}
+
+a {
+  color: inherit;
+}
+
+/* --- Utility classes ------------------------------------------------- */
+
+.alkalami-regular {
+  font-family: "Alkalami", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.amiri-regular {
+  font-family: "Amiri", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.amiri-bold {
+  font-family: "Amiri", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.amiri-regular-italic {
+  font-family: "Amiri", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.amiri-bold-italic {
+  font-family: "Amiri", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.rakkas-regular {
+  font-family: "Rakkas", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.momo-trust-display-regular {
+  font-family: "Momo Trust Display", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.slabo-27px-regular {
+  font-family: "Slabo 27px", serif;
+  font-weight: 400;
+  font-style: normal;
+}
