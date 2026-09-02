@@ -1,8 +1,15 @@
-# Phase 0 — provider benchmark
+# Platform
 
-Phase 0 of the platform plan in [`../docs`](../docs). It answers the two
-questions that determine whether the business works, **before** anything is
-built around the answers:
+Implementation of the plan in [`../docs`](../docs).
+
+Two pieces exist so far: the **Phase 0 provider benchmark**, and the **credit
+ledger and payment rail** (which are provider-independent, so they were built
+in parallel while Phase 0 waits on API keys).
+
+## Phase 0 — provider benchmark
+
+Answers the two questions that determine whether the business works, **before**
+anything is built around the answers:
 
 1. What does a shot actually cost, per provider, from an invoice rather than a
    blog post?
@@ -97,6 +104,12 @@ to correct:
 | `veo.ts` | `#toRequest` / `#fromOperation`, and the real reference-image ceiling (sources say 3 or 4) |
 | `kling.ts` | create/query endpoints, and whether the query path differs for image2video |
 | `runway.ts` | model identifiers, `ratio` values, and whether text-only shots need a different endpoint |
+| `wayl.ts` | whether `total` is whole IQD or minor units; webhook field names and status vocabulary; the event-identity field used for dedupe; whether the signature covers the raw body alone or a timestamp prefix |
+
+`wayl.io` and `api.thewayl.com` were unreachable from the environment this was
+written in, so the Wayl contract came from search results and a third-party PHP
+client rather than the official reference. Same caveat, same isolation: the
+mapping lives in `#toCreateBody` / `#parseEvent` / `mapStatus`.
 
 Everything outside those mapping functions — the runner, retries, idempotency,
 scoring, reporting — is provider-agnostic and already covered by tests against
@@ -107,11 +120,60 @@ Two things to record while you are in there: whether each provider returns a
 does), and whether it honours an **idempotency key** (without one, a retry is a
 double charge).
 
+## Credit ledger and payments
+
+Append-only, double-entry, with **every invariant enforced by the database**
+rather than by application discipline — `docs/04` calls this the one place where
+getting cute costs real money.
+
+Four accounts per org (`available`, `reserved`, `purchased`, `consumed`) and
+four movements, each summing to zero:
+
+```
+top-up 1000   purchased -1000   available +1000
+reserve  50   available   -50   reserved    +50
+settle   45   reserved    -50   consumed    +45   available +5
+refund   50   reserved    -50   available   +50
+```
+
+Enforced in SQL: append-only (UPDATE, DELETE **and TRUNCATE** all raise),
+zero-sum per transaction (deferred constraint trigger), non-negative balance
+(CHECK on a materialised row), and idempotency (unique index).
+
+Payments run on **Wayl**, an Iraqi aggregator fronting the local wallets. The
+rule that must not break: **the ledger is credited only from a
+signature-verified webhook**, never from the browser's return to `redirectUrl`,
+which is forgeable by visiting the success URL. There is deliberately no
+function in `packages/payments` that credits from a redirect — the absence is
+the safeguard, and a test guards it.
+
+### Running the tests
+
+```sh
+npm test                 # everything except the concurrency suite
+```
+
+The concurrency tests need a **real Postgres** — PGlite is single-connection and
+cannot hold two simultaneous transactions, so the double-spend race cannot be
+proven there. They are skipped without `DATABASE_URL`, which is worth saying out
+loud because a skipped test looks exactly like a passing one:
+
+```sh
+docker compose up -d
+DATABASE_URL=postgres://vidgen:vidgen@localhost:55432/vidgen npm test
+```
+
+Those three tests were verified to **fail** when the `SELECT ... FOR UPDATE` in
+`lockBalance` is removed. A concurrency test that passes either way proves
+nothing.
+
 ## Layout
 
 ```
 packages/shared      shot spec (zod) + Money. No float arithmetic, ever.
 packages/providers   VideoProvider interface, pricing table, adapters, registry
+packages/db          migrations, migration runner, credit ledger
+packages/payments    PaymentProvider interface, Wayl adapter, top-up path
 apps/bench           fixtures, runner, scoring, reporting, CLI
 ```
 

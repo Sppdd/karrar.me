@@ -4,14 +4,17 @@
 and by the Trade Bank of Iraq's own account it is years away.** Every default
 SaaS billing assumption has to be rebuilt.
 
-Decisions taken: an **Iraqi legal entity** integrating **local gateways
-directly**, for **Iraq-first customers**, on **prepaid credit top-ups**.
+Decisions taken: an **Iraqi legal entity**, **Iraq-first customers**, **prepaid
+credit top-ups**, and **Wayl** (`wayl.io`) as the launch rail.
 
-Integration is **server-to-server REST**, not hosted checkout widgets or CMS
-plugins. Each gateway publishes a REST API — FIB and ZainCash both authenticate
-with OAuth2 client credentials, and FIB maintains official Node and Python SDKs.
-Those are the integration surface; the WordPress and Woo plugins in the
-ecosystem are irrelevant here.
+Wayl is an Iraqi payment aggregator and merchant of record — "Stripe for Iraq" —
+with a Visa partnership and a Feb 2026 MoneyHash partnership. It fronts the
+local wallets through its **channels** concept, so one integration replaces
+three, with one reconciliation surface and one merchant onboarding instead of
+three separate CBI-regulated KYC processes.
+
+Integration is **server-to-server REST**, not CMS plugins. The WordPress and Woo
+plugins in this ecosystem are irrelevant here.
 
 ## Why prepaid credits are correct, not a compromise
 
@@ -54,19 +57,40 @@ interface PaymentProvider {
 }
 ```
 
-### Launch set
+### The Wayl contract
 
-| Gateway | Why | When |
+| | |
+| :-- | :-- |
+| Auth | `X-WAYL-AUTHENTICATION` header |
+| Create link | `referenceId`, `total`, `currency: 'IQD'`, `lineItem[]`, `webhookUrl`, `webhookSecret`, `redirectionUrl` |
+| Response | checkout URL, payment code, status, timestamps |
+| Statuses | `Created`, `Pending`, then paid/failed states |
+| Webhook | POST JSON, `x-wayl-signature-256` = HMAC-SHA256 over the **raw** body |
+| Endpoints | links (create/all/find/invalidate/batch), refunds (create/cancel), subscriptions, products, channels |
+
+Three things make it a clean fit. `referenceId` is a natural **idempotency
+key**, so the double-charge protection this doc requires is already in the wire
+protocol. HMAC over the raw body is exactly the shape `verifyWebhook(raw,
+headers)` was designed for. And it is **IQD-native**.
+
+**⚠ The contract above is assembled from secondary sources**, not read from the
+official reference — `wayl.io` and `api.thewayl.com` were unreachable from the
+environment this was written in. Confirm against `api.thewayl.com/reference` and
+a sandbox key before go-live.
+
+### Fallbacks, if Wayl concentration becomes a problem
+
+Wayl is a **single point of failure for all revenue**, it adds a fee layer, and
+it is a young company (pre-seed 2024) sitting in the payment path. That is a
+real risk accepted deliberately, in exchange for one integration instead of
+three. The mitigation is that the adapter interface stays, so adding a direct
+gateway later is a new adapter rather than a refactor:
+
+| Gateway | Why | If needed |
 | :-- | :-- | :-- |
-| **FIB** | Best developer surface: REST, OAuth2 client credentials, sandbox, maintained Node/Python/PHP SDKs, create/status/refund/cancel plus callbacks | Phase 1 |
-| **ZainCash** | Largest wallet reach. v2 API: OAuth2, redirect flow, webhooks, refunds | Phase 2 |
-| **Qi Card** | REST + webhooks + 3DS, and accepts cards issued **inside and outside** Iraq — this is the international on-ramp | Phase 3 |
-
-Orchestrators (Rasedi, VeePay) front all the local wallets behind a single API.
-The honest tradeoff: one integration instead of three, at the cost of an added
-fee layer and a hard dependency on a young intermediary. Integrate two gateways
-directly; revisit an orchestrator only if adapter maintenance becomes the actual
-bottleneck rather than a hypothetical one.
+| **FIB** | Best direct developer surface: REST, OAuth2 client credentials, sandbox, maintained Node/Python/PHP SDKs | First fallback |
+| **ZainCash** | Largest wallet reach. v2 API: OAuth2, redirect flow, webhooks, refunds | Second |
+| **Qi Card** | REST + webhooks + 3DS, accepts cards issued **inside and outside** Iraq | International on-ramp |
 
 ## Top-up flow
 
@@ -133,8 +157,9 @@ the profession, commercial lease or title deed, business owner ID, and the
 merchant bank account.
 
 **Commercial terms — fees, commission rates, settlement times — are not reliably
-published.** Get them in writing per gateway during onboarding; do not plan
-margins against a number from a blog post.
+published.** Get them in writing from Wayl during onboarding; do not plan
+margins against a number from a blog post. As an aggregator, Wayl's take sits on
+top of the underlying wallet's, so the effective rate is what matters.
 
 Cash on delivery dominates Iraqi e-commerce generally but is **not applicable
 here** — the product is delivered by API the moment credits are spent. Worth

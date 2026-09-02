@@ -1,0 +1,23 @@
+# Postgres for the concurrency tests only.
+#
+# The rest of the db suite runs against PGlite in-process and needs nothing.
+# But PGlite is single-connection, so the double-spend race - the single most
+# important property of the ledger - cannot be proven there. That test needs two
+# genuinely simultaneous transactions, which needs a real server.
+#
+#   docker compose up -d
+#   DATABASE_URL=postgres://vidgen:vidgen@localhost:55432/vidgen npm test
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vidgen
+      POSTGRES_PASSWORD: vidgen
+      POSTGRES_DB: vidgen
+    ports:
+      - '55432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U vidgen']
+      interval: 2s
+      timeout: 3s
+      retries: 20

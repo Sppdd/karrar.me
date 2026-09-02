@@ -13,11 +13,16 @@
     "bench": "node --experimental-strip-types apps/bench/src/cli.ts"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@types/node": "^22.10.2",
     "typescript": "^5.7.2",
     "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "@types/pg": "^8.23.1",
+    "pg": "^8.23.0"
   }
 }
