@@ -1,16 +1,28 @@
 ---
-
+import Base from '../layouts/Base.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Karrar" description="Personal site of Karrar.">
+	<main>
+		<h1>Karrar</h1>
+		<p>Building things on the web. More here soon.</p>
+	</main>
+</Base>
+
+<style>
+	main {
+		max-width: 40rem;
+		margin: 0 auto;
+		padding: 4rem 1.5rem;
+	}
+
+	h1 {
+		font-size: clamp(2.5rem, 8vw, 4rem);
+		margin: 0 0 0.5rem;
+	}
+
+	p {
+		color: var(--fg-muted);
+		margin: 0;
+	}
+</style>
