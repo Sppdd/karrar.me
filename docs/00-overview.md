@@ -65,3 +65,5 @@ infra/            migrations, docker-compose, deploy
 | [03-character-continuity.md](03-character-continuity.md) | Keeping a character the same across shots |
 | [04-cost-and-data.md](04-cost-and-data.md) | Cost engine, credit ledger, data model, scaling |
 | [05-phasing.md](05-phasing.md) | What ships when, and what Phase 0 must measure |
+| [06-auth.md](06-auth.md) | Google OAuth, sessions, org bootstrapping |
+| [07-payments.md](07-payments.md) | Iraqi payment rails, credit top-ups, FX |

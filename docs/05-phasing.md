@@ -3,9 +3,9 @@
 | Phase | Weeks | Ships |
 | :-- | :-- | :-- |
 | 0 | 1–2 | Provider spike: benchmark 3 video models on cost, latency, character fidelity. Pick two. |
-| 1 | 3–6 | Auth, brand profile, script → shot list, single-shot generation, credit ledger |
-| 2 | 7–10 | Multi-shot assembly, continuity chaining, one character, export. **MVP launch.** |
-| 3 | 11–16 | Character bible, style library, draft/final modes, reference-clip descriptors |
+| 1 | 3–6 | Google OAuth, brand profile, script → shot list, single-shot generation, credit ledger, FIB top-ups |
+| 2 | 7–10 | Multi-shot assembly, continuity chaining, one character, export, ZainCash. **MVP launch.** |
+| 3 | 11–16 | Character bible, style library, draft/final modes, reference-clip descriptors, Qi Card + phone auth |
 | 4 | 17+ | Series continuity, team seats, platform-native aspect exports, analytics |
 
 ## Phase 0 is not optional

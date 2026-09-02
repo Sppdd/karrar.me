@@ -23,6 +23,10 @@ Never mutate a balance column. Balance is a sum over the ledger, materialized if
 you need the read speed. This is the one place in the system where getting cute
 costs you real money and unfalsifiable support tickets.
 
+Credits enter the ledger through prepaid top-ups, not subscriptions — the write
+path, the webhook rules, and the IQD/USD exposure this creates are in
+[07-payments.md](07-payments.md).
+
 **Idempotency keys** on every provider call. Temporal *will* retry activities;
 without idempotency keys, a retry is a double charge. The key should derive from
 `(generation_id, attempt)` so it is stable across replays.
@@ -65,6 +69,8 @@ Core tables:
 | Table | Notes |
 | :-- | :-- |
 | `orgs`, `users` | Tenancy from day one; retrofitting it is miserable |
+| `identities` | One row per linked login method; see [06-auth.md](06-auth.md#tables) |
+| `sessions` | Hashed refresh token, device metadata, revocation |
 | `brands` | Brand profile: voice, palette, logo assets |
 | `series` | Holds characters, locations, palette for cross-episode continuity |
 | `characters` | The character bible |
@@ -76,6 +82,8 @@ Core tables:
 | `credit_ledger` | Append-only, double-entry |
 | `reference_clips` | Uploaded source material |
 | `clip_descriptors` | Extracted style descriptors |
+| `payments` | One row per top-up, with gateway ref and pinned FX rate |
+| `payment_webhook_events` | Gateway event IDs, for idempotent webhook processing |
 
 `generations` is the important one. One row per provider call — not per shot —
 is what makes regeneration rate measurable, cost reconcilable, and retries
